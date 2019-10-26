@@ -1,0 +1,100 @@
+Consulta 1
+Obtener el nombre y el apellido de los clientes que han comprado como mínimo un coche de color
+‘verde’ o un coche de color ‘azul’. 
+Solución:
+select nombre, apellidos
+from Clientes
+where dni in (select dni
+from Ventas
+where color = "verde" or color = "azul")
+
+Resultado:
+('María', 'Garcia')
+('Javier', 'González')
+
+Consulta 2
+Obtener el nombre de los concesionarios que sólo han vendido coches al cliente con dni igual a 0001. 
+Solución:
+select nombre
+from Concesionarios
+where cifc in (select cifc
+from Ventas as v1
+where not exists (select *
+from Ventas as v2
+where v1.cifc = v2.cifc
+and v2.dni <> 0001))
+
+Resultado:
+No hay filas
+
+Consulta 3
+Obtener los codcoche y la media de los valores del atributo cantidad para cada codcoche que aparece
+en la relación distribucion para los casos en que la media sea menor que 15. 
+Solución:
+select codcoche, media
+from (select codcoche, avg (cantidad) as media
+from distribucion
+group by codcoche)
+where media < 15
+
+Resultado:
+('0001', 3.0)
+('0002', 7.0)
+('0003', 7.0)
+('0006', 5.0)
+('0007', 10.0)
+('0008', 10.0)
+('0010', 5.0)
+('0011', 3.0)
+('0012', 5.0)
+('0013', 10.0)
+('0014', 5.0)
+
+Consulta 4
+Obtener para cada valor de dni de los clientes el número de veces que aparece en la relación ventas. 
+Solución:
+select dni, (select count(*) from Ventas where Clientes.dni = Ventas.dni) as nventas
+from Clientes
+
+Resultado:
+('0001', 2)
+('0002', 1)
+('0003', 1)
+('0004', 2)
+('0005', 2)
+('0006', 0)
+('0007', 0)
+('0008', 0)
+
+Consulta 5
+Obtener el dni de los clientes de nombre ‘pepe’ o de nombre ‘luis’ (no se admiten valores repetidos). 
+Solución:
+select dni
+from Clientes
+where nombre = "Pepe"
+union
+select dni
+from Clientes
+where nombre = "Luis"
+
+Resultado:
+'0001'
+
+Consulta 6
+Obtener el cifc de todos los concesionarios cuyo atributo cantidad en la relación distribucion no
+está comprendido entre 10 y 18 ambos inclusive (es decir, los valores menores que 10 y mayores que
+18).
+Solución:
+select cifc
+from distribucion
+where cantidad not between 10 and 18
+
+Resultado:
+0001
+0001
+0001
+0002
+0003
+0003
+0003
+0004
